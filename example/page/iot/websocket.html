@@ -13,6 +13,7 @@
     <div id="view"></div>
     <div id="status">
       <p><span>当前温度</span><span id="temperature">...</span></p>
+      <p>(超过 25℃ 模型报警)</p>
     </div>
     <script src="../../sdk/index.js"></script>
     <script>
@@ -64,30 +65,13 @@
           temperature.textContent = `${data}℃`;
           // 温度 >= 25℃ 就告警
           if (data >= 25) {
-            ssp.highlightShow(sensorModel);
+            ssp.emissiveShow(sensorModel);
           } else {
-            ssp.unHighlightShow(sensorModel);
+            ssp.unEmissiveShow(sensorModel);
           }
         };
       });
 
-      ssp.viewport.controls.setState({
-        // 缩放速度
-        zoomSpeed: 2,
-        // 最小缩放距离
-        zoomMinDistance: 10,
-        // 最大缩放距离
-        zoomMaxDistance: 20000,
-        // pc 端相机距离碰撞面的最小距离
-        zoomMinDistanceToMesh: 10,
-        // 旋转速度
-        rotateSpeed: 1,
-        // 上下旋转角度范围限制
-        rotateTiltRange: {
-          max: Math.PI,
-          min: Math.PI / 2,
-        },
-      });
     </script>
   </body>
 </html>
