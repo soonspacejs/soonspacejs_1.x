@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css">
+</head>
+
+<body>
+  <div id="view"></div>
+
+  <script src="../../sdk/index.js"></script>
+  <script src="../../../package/soon-gui/index.js"></script>
+
+  <script>
+
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true,
+      },
+      events: {}
+    })
+
+    let model, model2
+
+    ssp.loadModel({
+      id: 'firsFbxGroup',
+      url: '../../asstes/model/Fbx/dt/DTdh.fbx',
+      position: { x: 0, y: 0, z: 40 },
+      onClick() {
+        console.log('model self click', this)
+      },
+      onLoad() {
+        console.log('onLoad', this)
+      }
+    })
+      .then(fbx => {
+        model = fbx
+
+        ssp.flyToObj(fbx, 'leftTop')
+
+        return ssp.cloneModel(model, {
+          id: 'firsFbxGroup2',
+          position: { x: 0, y: 0, z: 20 }
+        })
+      })
+      .then(fbx => {
+        console.log(fbx)
+        model2 = fbx
+      })
+
+    const gui = new GUI({
+      el: '#view'
+    })
+
+    gui.addCheckBox({
+      label: '模型动画',
+      onChange(e) {
+        if (e.target.checked) {
+          const clipAction = model.playAnimation()
+          const clipAction2 = model2.playAnimation()
+
+          console.log(clipAction, clipAction2)
+        }
+        else {
+          model.stopAnimation()
+          model2.stopAnimation()
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css">
+</head>
+
+<body>
+  <div id="view"></div>
+  <script src="../../sdk/index.js"></script>
+  <script src="../../../package/soon-gui/index.js"></script>
+
+  <script>
+
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true
+      },
+      events: {}
+    })
+
+    let flame = ssp.createFlame({
+      id: 'flame',
+      texturePath: '../../asstes/img/effect/flame.png',
+      scale: {
+        x: 300,
+        y: 300,
+        z: 300
+      },
+      position: {
+        x: 1000,
+        y: 0,
+        z: 0
+      },
+      // depth:0.8
+    })
+
+    ssp.flyToObj(flame)
+
+    const baseUrl = '../../asstes/model/sbm/yingtaidasha'
+    const sbmsInfo = [
+      {
+        id: 'B1_0',
+        name: 'B1',
+        url: `${baseUrl}/yingtaidasha_B1_0.sbm`,
+      }
+    ]
+
+    /**
+     * 加载 sbm˝
+     */
+    ssp.loadSbm(sbmsInfo)
+
+    const gui = new GUI({
+      el: '#view'
+    })
+    gui.addRange({
+      label: 'magnitude:',
+      value: 1.3,
+      min: 0,
+      max: '2.0',
+      step: 0.01,
+      onInput(e) {
+        flame.magnitude = e.target.value
+      }
+    })
+
+    gui.addButton({
+      text: '清楚火🔥',
+      onClick(e) {
+        ssp.removeEffectById('flame')
+      }
+    })
+
+  </script>
+</body>
+
+</html>

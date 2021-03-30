@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css" />
+</head>
+
+<body>
+  <div id="view"></div>
+
+  <script src="../../sdk/index.js"></script>
+  <script src="../../../package/soon-gui/index.js"></script>
+  <script>
+
+    let model = null;
+
+    const ssp = new SoonSpace({
+      el: "#view",
+      option: {},
+      events: {},
+    });
+
+    const gui = new GUI({
+      el: "#view",
+    });
+
+    function doorAnimation(isOpen) {
+      /**
+       * 用户获取模型代码
+       */
+      // // 通过设备编码获取模型
+      // // getSbmByUserDataProperty 是返回数组
+      // const model = ssp.getSbmByUserDataProperty('devicecode', 'xxxx')[0]
+      // // 通过 ID 获取模型
+      // // getSbmById 是返回单模型
+      // const model = ssp.getSbmById('xxxx')
+
+      // 移动距离
+      const moveLen = 1
+      // 动画参数
+      const animationOpt = {
+        duration: 1500
+      }
+
+      if (model) {
+
+        // 屏蔽门内部固定了 0 是左侧，1 是右侧
+        const leftModel = model.children[0]
+        const rightModel = model.children[1]
+
+        const leftModelWorldPosition = ssp.utils.getBoundingBox(leftModel).getCenter()
+        const rightModelWorldPosition = ssp.utils.getBoundingBox(rightModel).getCenter()
+
+        // 计算 x 轴和 z 轴位置差
+        const xDiff = rightModelWorldPosition.x - leftModelWorldPosition.x
+        const zDiff = rightModelWorldPosition.z - leftModelWorldPosition.z
+
+        // 通过比较 x 轴和 z 轴的位置差距离确定俩扇门是在哪个轴上排列
+        const axis = Math.abs(xDiff) > Math.abs(zDiff) ? 'x' : 'z'
+
+        // 确定轴后，当前轴的位置差为有限差
+        const axisDiff = axis === 'x' ? xDiff : zDiff
+
+        const modelWorldQuaternion = model.getWorldQuaternion()
+        const rotation = new ssp.viewport.THREE.Euler().setFromQuaternion(modelWorldQuaternion)
+
+        const rotationVector = rotation.z === Math.PI ? -1 : 1
+
+        // 计算轴上移动量为正还是为负
+        const axisMoveLen = moveLen * (axisDiff / Math.abs(axisDiff)) * rotationVector
+
+        // 准备目标位置
+        const leftTargetPosition = leftModel.position.clone()
+        const rightTargetPosition = rightModel.position.clone()
+        // 开
+        if (isOpen) {
+          leftTargetPosition[axis] -= axisMoveLen
+          rightTargetPosition[axis] += axisMoveLen
+        }
+        // 关
+        else {
+          leftTargetPosition[axis] += axisMoveLen
+          rightTargetPosition[axis] -= axisMoveLen
+        }
+
+        // 左侧门动画
+        ssp.animation(
+          leftModel.position,
+          leftTargetPosition,
+          animationOpt
+        )
+        // 右侧门动画
+        ssp.animation(
+          rightModel.position,
+          rightTargetPosition,
+          animationOpt
+        )
+      }
+    }
+
+    gui.addButton({
+      text: "开",
+      onClick() {
+        doorAnimation(true)
+      },
+    });
+
+    gui.addButton({
+      text: "关",
+      onClick() {
+        doorAnimation(false)
+      },
+    });
+
+    const baseUrl = "../../asstes/model/sbm/pingbimeng";
+    ssp.loadSbm({
+      id: "1F",
+      name: "1F",
+      url: `${baseUrl}/pingbimeng.sbm`,
+      rotation: {
+        x: Math.PI / 2,
+        y: 0,
+        z: Math.PI
+        // z: 0
+      }
+    }).then(sbm => {
+      model = sbm
+
+      ssp.flyMainViewpoint('front', { padding: 2 })
+    });
+  </script>
+</body>
+
+</html>

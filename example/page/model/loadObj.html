@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css">
+</head>
+
+<body>
+  <div id="view"></div>
+  <script src="../../sdk/index.js"></script>
+  <script>
+
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true,
+        showGrid: true,
+        backgroundColor: 0x30030
+      },
+      events: {}
+    })
+
+    const { THREE } = ssp.viewport
+
+    new THREE.OBJLoader().load('../../asstes/model/obj/cfxjl-模型/cfxjl-2组02.obj', (e) => {
+      console.log(e)
+      ssp.addObject(e, ssp.manager.modelManager.scene)
+      ssp.flyMainViewpoint()
+    })
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+
+node_modules
+
+# Test
+example/page/test
+example/asstes/testModel
+example/online-edit
+
+# Big file
+example/asstes/model/json/1_line.json
+
+# Private file
+example/sdk/index.sbm.js
+
+# package
+package/@soonspacejs
+package/soon-db

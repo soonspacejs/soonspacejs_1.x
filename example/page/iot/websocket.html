@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SoonSpace Example</title>
+    <link rel="stylesheet" href="../../asstes/css/base.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+
+  <body>
+    <div id="view"></div>
+    <div id="status">
+      <p><span>当前温度</span><span id="temperature">...</span></p>
+    </div>
+    <script src="../../sdk/index.js"></script>
+    <script>
+      const ssp = new SoonSpace({
+        el: '#view',
+        option: {
+          showInfo: true,
+          showGrid: false,
+          closeWarnLog: true,
+        },
+        events: {
+          modelClick(e) {
+            console.log(e);
+          },
+          modelRightClick(e) {
+            console.log(e);
+          },
+          selectPosition(p) {
+            console.log(p);
+          },
+        },
+      });
+
+      const sbmsInfo = [
+        {
+          id: 'sensor',
+          name: 'sensor',
+          url:
+            '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
+        },
+      ];
+
+      // 温度
+      const temperature = document.querySelector('#temperature');
+      let webSocket = null;
+
+      ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
+        ssp.flyToObj(sensorModel);
+
+        // 建立 wss 连接
+        webSocket = new WebSocket('wss://3dmmd.cn/wss');
+
+        // 建立 websocket 连接成功触发事件
+        webSocket.onopen = function() {
+          console.log('websoket服务器连接成功...');
+        };
+
+        webSocket.onmessage = function({ data }) {
+          temperature.textContent = `${data}℃`;
+          // 温度 >= 25℃ 就告警
+          if (data >= 25) {
+            ssp.highlightShow(sensorModel);
+          } else {
+            ssp.unHighlightShow(sensorModel);
+          }
+        };
+      });
+
+      ssp.viewport.controls.setState({
+        // 缩放速度
+        zoomSpeed: 2,
+        // 最小缩放距离
+        zoomMinDistance: 10,
+        // 最大缩放距离
+        zoomMaxDistance: 20000,
+        // pc 端相机距离碰撞面的最小距离
+        zoomMinDistanceToMesh: 10,
+        // 旋转速度
+        rotateSpeed: 1,
+        // 上下旋转角度范围限制
+        rotateTiltRange: {
+          max: Math.PI,
+          min: Math.PI / 2,
+        },
+      });
+    </script>
+  </body>
+</html>
