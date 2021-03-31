@@ -1,77 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>SoonSpace Example</title>
-    <link rel="stylesheet" href="../../asstes/css/base.css" />
-    <link rel="stylesheet" href="./index.css" />
-  </head>
 
-  <body>
-    <div id="view"></div>
-    <div id="status">
-      <p><span>当前温度</span><span id="temperature">...</span></p>
-      <p>(超过 25℃ 模型报警)</p>
-    </div>
-    <script src="../../sdk/index.js"></script>
-    <script>
-      const ssp = new SoonSpace({
-        el: '#view',
-        option: {
-          showInfo: true,
-          showGrid: false,
-          closeWarnLog: true,
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body>
+  <div id="view"></div>
+  <div id="status">
+    <p><span>当前温度</span><span id="temperature">...</span></p>
+    <p>(超过 25℃ 模型报警)</p>
+  </div>
+  <script src="../../sdk/index.js"></script>
+  <script>
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true,
+        showGrid: false,
+        closeWarnLog: true,
+      },
+      events: {
+        modelClick(e) {
+          console.log(e);
         },
-        events: {
-          modelClick(e) {
-            console.log(e);
-          },
-          modelRightClick(e) {
-            console.log(e);
-          },
-          selectPosition(p) {
-            console.log(p);
-          },
+        modelRightClick(e) {
+          console.log(e);
         },
-      });
-
-      const sbmsInfo = [
-        {
-          id: 'sensor',
-          name: 'sensor',
-          url:
-            '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
+        selectPosition(p) {
+          console.log(p);
         },
-      ];
+      },
+    });
 
-      // 温度
-      const temperature = document.querySelector('#temperature');
-      let webSocket = null;
+    const sbmsInfo = [
+      {
+        id: 'sensor',
+        name: 'sensor',
+        url:
+          '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
+      },
+    ];
 
-      ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
-        ssp.flyToObj(sensorModel);
+    // 温度
+    const temperature = document.querySelector('#temperature');
+    let webSocket = null;
 
-        // 建立 wss 连接
-        webSocket = new WebSocket('wss://3dmmd.cn/wss');
+    ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
+        // 模型加载完成
+      ssp.flyToObj(sensorModel);
 
-        // 建立 websocket 连接成功触发事件
-        webSocket.onopen = function() {
-          console.log('websoket服务器连接成功...');
-        };
+      // 建立 wss 连接
+      webSocket = new WebSocket('wss://3dmmd.cn/wss');
 
-        webSocket.onmessage = function({ data }) {
-          temperature.textContent = `${data}℃`;
-          // 温度 >= 25℃ 就告警
-          if (data >= 25) {
-            ssp.emissiveShow(sensorModel);
-          } else {
-            ssp.unEmissiveShow(sensorModel);
-          }
-        };
-      });
+      // 建立 websocket 连接成功触发事件
+      webSocket.onopen = function () {
+        console.log('websoket服务器连接成功...');
+      };
 
-    </script>
-  </body>
+      webSocket.onmessage = function ({ data }) {
+        temperature.textContent = `${data}℃`;
+        // 温度 >= 25℃ 就告警
+        if (data >= 25) {
+          ssp.emissiveShow(sensorModel);
+        } else {
+          ssp.unEmissiveShow(sensorModel);
+        }
+      };
+    });
+
+    ssp.viewport.controls.setState({
+      zoomSpeed: 2,
+      zoomMinDistance: 10,
+      zoomMaxDistance: 20000,
+      zoomMinDistanceToMesh: 10,
+      rotateSpeed: 1,
+      rotateTiltRange: {
+        max: Math.PI,
+        min: Math.PI / 2,
+      },
+    });
+  </script>
+</body>
+
 </html>

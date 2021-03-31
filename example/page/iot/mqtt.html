@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SoonSpace Example</title>
+    <link rel="stylesheet" href="../../asstes/css/base.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+
+  <body>
+    <div id="view"></div>
+    <div id="status">
+      <p><span>当前温度</span><span id="temperature">...</span></p>
+      <p>(超过 25℃ 模型报警)</p>
+    </div>
+    <script src="../../sdk/index.js"></script>
+    <script src="./mqtt.js"></script>
+    <script>
+      /**
+       * 新建 SoonSpace 实例
+       */
+      const ssp = new SoonSpace({
+        el: '#view',
+        option: {
+          showInfo: true,
+          showGrid: false,
+          closeWarnLog: true,
+        },
+        events: {
+          modelClick(e) {
+            console.log(e);
+          },
+          modelRightClick(e) {
+            console.log(e);
+          },
+          selectPosition(p) {
+            console.log(p);
+          },
+        },
+      });
+
+      /**
+       * 模型文件列表
+       */
+      const sbmsInfo = [
+        {
+          id: 'sensor',
+          name: 'sensor',
+          url:
+            '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
+        },
+      ];
+
+      // 温度
+      const temperature = document.querySelector('#temperature');
+      // 温度模拟数据
+      const mockTemperatureData = ['10', '25', '32', '40', '6', '20'];
+      let client = null;
+
+      ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
+        // 模型加载完成
+        ssp.flyToObj(sensorModel);
+
+        /** ******************* 以下为MQTT数据对接 ********************/
+        // 测试的MQTT服务器文档参考 http://test.mosquitto.org/
+        // 模拟设备端每隔3秒会向服务器 /sensor/dev 发送一条温度数据
+        // 客户端订阅了 /sensor/dev 主题
+        // 也可以通过其他MQTT客户端向服务器发送 /sensor/dev 主题的消息，验证MQTT服务
+        client = mqtt.connect('ws://test.mosquitto.org:8080');
+
+        client.on('connect', function() {
+          client.subscribe('/sensor/dev', function(err) {
+            if (!err) {
+              // 这里模拟设备端向服务器发送温度数据
+              setInterval(() => {
+                client.publish(
+                  '/sensor/dev',
+                  mockTemperatureData[
+                    Math.floor(mockTemperatureData.length * Math.random())
+                  ]
+                );
+              }, 3000);
+            }
+          });
+        });
+        client.on('message', function(topic, payload) {
+          // 返回 Array Buffer
+          // 将数据转换为 number
+          const data = +payload.toString();
+          temperature.textContent = `${data}℃`;
+          // 温度 >= 25℃ 就告警
+          // 在这里操作模型
+          if (data >= 25) {
+            ssp.emissiveShow(sensorModel);
+          } else {
+            ssp.unEmissiveShow(sensorModel);
+          }
+        });
+      });
+
+      ssp.viewport.controls.setState({
+        zoomSpeed: 2,
+        zoomMinDistance: 10,
+        zoomMaxDistance: 20000,
+        zoomMinDistanceToMesh: 10,
+        rotateSpeed: 1,
+        rotateTiltRange: {
+          max: Math.PI,
+          min: Math.PI / 2,
+        },
+      });
+    </script>
+  </body>
+</html>

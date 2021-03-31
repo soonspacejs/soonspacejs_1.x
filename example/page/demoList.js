@@ -25,10 +25,10 @@ export default [
         title: "加载 Xml",
         demoLink: "./model/loadXml.html"
       },
-      {
-        title: "加载 json",
-        demoLink: "./model/loadJson.html"
-      },
+      // {
+      //   title: "加载 json",
+      //   demoLink: "./model/loadJson.html"
+      // },
       {
         title: "加载 gltf",
         demoLink: "./model/loadGltf.html"
@@ -321,6 +321,10 @@ export default [
         title: "数据接入_WebSocket",
         demoLink: "./iot/websocket.html"
       },
+      {
+        title:'数据接入_MQTT',
+        demoLink: './iot/mqtt.html'
+      }
     ]
   }
 ]

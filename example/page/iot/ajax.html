@@ -1,87 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>SoonSpace Example</title>
-    <link rel="stylesheet" href="../../asstes/css/base.css" />
-    <link rel="stylesheet" href="./index.css" />
-  </head>
 
-  <body>
-    <div id="view"></div>
-    <div id="status">
-      <p><span>当前温度</span><span id="temperature">...</span></p>
-      <p>(超过 25℃ 模型报警)</p>
-    </div>
-    <script src="../../sdk/index.js"></script>
-    <script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body>
+  <div id="view"></div>
+  <div id="status">
+    <p><span>当前温度</span><span id="temperature">...</span></p>
+    <p>(超过 25℃ 模型报警)</p>
+  </div>
+  <script src="../../sdk/index.js"></script>
+  <script>
+    /**
+     * 新建 SoonSpace 实例 
+     */
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true,
+        showGrid: false,
+        closeWarnLog: true,
+      },
+      events: {
+        modelClick(e) {
+          console.log(e);
+        },
+        modelRightClick(e) {
+          console.log(e);
+        },
+        selectPosition(p) {
+          console.log(p);
+        },
+      },
+    });
+
+    /**
+     * 模型文件列表
+     */
+    const sbmsInfo = [
+      {
+        id: 'sensor',
+        name: 'sensor',
+        url:
+          '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
+      },
+    ];
+
+    // 温度
+    const temperature = document.querySelector('#temperature');
+
+    ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
+        // 模型加载完成
+      ssp.flyToObj(sensorModel);
+
       /**
-       * 新建 SoonSpace 实例 
+       * 返回的格式为 `{ temper: number }[]`
        */
-      const ssp = new SoonSpace({
-        el: '#view',
-        option: {
-          showInfo: true,
-          showGrid: false,
-          closeWarnLog: true,
-        },
-        events: {
-          modelClick(e) {
-            console.log(e);
-          },
-          modelRightClick(e) {
-            console.log(e);
-          },
-          selectPosition(p) {
-            console.log(p);
-          },
-        },
-      });
+      // 文档参考 https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch
+      fetch('./iot-data.json')
+        .then((res) => res.json())
+        .then((data) => {
+          // 模拟轮询请求, 每3秒请求一次
+          setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * data.length);
+            const randomTemperature = data[randomIndex]?.temper;
+            temperature.textContent = `${randomTemperature}℃`;
+            // 温度 >= 25℃ 就告警
+            if (randomTemperature >= 25) {
+              // 高亮模型
+              ssp.emissiveShow(sensorModel);
+            } else {
+              // 取消高亮
+              ssp.unEmissiveShow(sensorModel);
+            }
+          }, 3000);
+        });
+    });
 
-      /**
-       * 模型文件列表
-       */
-      const sbmsInfo = [
-        {
-          id: 'sensor',
-          name: 'sensor',
-          url:
-            '../../asstes/model/sbm/WunShiDunZhuangGangQi/WunShiDunZhuangGangQi.sbm',
-        },
-      ];
+    ssp.viewport.controls.setState({
+      zoomSpeed: 2,
+      zoomMinDistance: 10,
+      zoomMaxDistance: 20000,
+      zoomMinDistanceToMesh: 10,
+      rotateSpeed: 1,
+      rotateTiltRange: {
+        max: Math.PI,
+        min: Math.PI / 2,
+      },
+    });
+  </script>
+</body>
 
-      // 温度
-      const temperature = document.querySelector('#temperature');
-
-      ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
-        ssp.flyToObj(sensorModel);
-
-        /**
-         * 返回的格式为 `{ temper: number }[]`
-         */
-        // 文档参考 https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API/Using_Fetch
-        fetch('./iot-data.json')
-          .then((res) => res.json())
-          .then((data) => {
-            // 模拟轮询请求, 每3秒请求一次
-            setInterval(() => {
-              const randomIndex = Math.floor(Math.random() * data.length);
-              const randomTemperature = data[randomIndex]?.temper;
-              temperature.textContent = `${randomTemperature}℃`;
-              // 温度 >= 25℃ 就告警
-              if (randomTemperature >= 25) {
-                // 高亮模型
-                ssp.emissiveShow(sensorModel);
-              } else {
-                // 取消高亮
-                ssp.unEmissiveShow(sensorModel);
-              }
-            }, 3000);
-          });
-      });
-
-    </script>
-  </body>
 </html>
