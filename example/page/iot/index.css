@@ -1,8 +1,5 @@
 #status {
-  position: fixed;
-  top: 24px;
-  left: 24px;
-  background: linear-gradient(to right, #239e38, #333300);
+  background: linear-gradient(to right, #239e38, transparent);
   border-radius: 4px;
   color: #fff;
   padding: 10px;

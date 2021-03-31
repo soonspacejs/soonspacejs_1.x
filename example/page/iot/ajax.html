@@ -12,11 +12,9 @@
 
 <body>
   <div id="view"></div>
-  <div id="status">
-    <p><span>当前温度</span><span id="temperature">...</span></p>
-    <p>(超过 25℃ 模型报警)</p>
-  </div>
+
   <script src="../../sdk/index.js"></script>
+  <script src="./poi-node.js"></script>
   <script>
     /**
      * 新建 SoonSpace 实例 
@@ -54,12 +52,13 @@
     ];
 
     // 温度
-    const temperature = document.querySelector('#temperature');
 
     ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
-        // 模型加载完成
-      ssp.flyToObj(sensorModel);
-
+      // 模型加载完成
+      ssp.flyToObj(sensorModel, 'frontTop', { padding: 40 });
+      // 创建 poi 
+      const el = createPoiNode(ssp)
+      const temperature = el.querySelector('#temperature')
       /**
        * 返回的格式为 `{ temper: number }[]`
        */

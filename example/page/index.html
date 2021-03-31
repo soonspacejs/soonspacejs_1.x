@@ -129,7 +129,7 @@
       },
       computed: {
         codeBtnHref: function () {
-          return "https://github.com/xuekai-china/xuekai-china.github.io/tree/master/soonspacejs/example/page/" + this.iframeLink
+          return "https://github.com/soonspacejs/soonspacejs_1.x/tree/main/example/page/" + this.iframeLink
         }
       },
       methods: {
@@ -140,7 +140,7 @@
           if (winHash) hash = winHash.split('#')[1]
 
           const hashArr = hash.split('_')
-          const iframeLink = `./${hashArr.join('/')}.html`
+          const iframeLink = `./${hashArr.join('/')}.html?s=${Date.now()}`
 
           this.selectedKeys = [iframeLink]
           this.openKeys = [hashArr[0]]

@@ -12,11 +12,8 @@
 
 <body>
   <div id="view"></div>
-  <div id="status">
-    <p><span>当前温度</span><span id="temperature">...</span></p>
-    <p>(超过 25℃ 模型报警)</p>
-  </div>
   <script src="../../sdk/index.js"></script>
+  <script src="./poi-node.js"></script>
   <script>
     const ssp = new SoonSpace({
       el: '#view',
@@ -52,8 +49,12 @@
     let webSocket = null;
 
     ssp.loadSbm(sbmsInfo).then(([sensorModel]) => {
-        // 模型加载完成
-      ssp.flyToObj(sensorModel);
+      // 模型加载完成
+      ssp.flyToObj(sensorModel, 'frontTop', { padding: 40 });
+      // 创建 poi 
+      const el = createPoiNode(ssp)
+      const temperature = el.querySelector('#temperature')
+
 
       // 建立 wss 连接
       webSocket = new WebSocket('wss://3dmmd.cn/wss');
