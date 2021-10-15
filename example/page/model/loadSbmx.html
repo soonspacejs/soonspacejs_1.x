@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SoonSpace Example</title>
+    <link rel="stylesheet" href="../../asstes/css/base.css" />
+</head>
+
+<body>
+    <div id="view"></div>
+    <script src="../../sdk/index.js"></script>
+    <script>
+
+        // 角度转弧度
+        const deg2rad = (deg) => {
+            return deg * (Math.PI / 180);
+        };
+
+        const ssp = window.ssp = new SoonSpace({
+            el: '#view',
+            option: {
+                showGrid: true,
+                showInfo: true,
+            },
+            events: {
+                modelClick(param) {
+                    // console.log(param)
+                },
+                modelDblClick(param) {
+                    ssp.flyToObj(param.target)
+                },
+            },
+        });
+
+        ssp.setModelDracoDecoderPath(
+            '../../sdk/libs/draco/'
+        );
+
+        const modelData =
+            fetch('../../asstes/model/sbmx/wjc/db/poiInfo.json')
+                .then((res) => res.json());
+
+        (async () => {
+            // 模型数据
+            const data = await modelData
+
+            // 加载所有模型
+            await Promise.allSettled(
+                data.map((item) => {
+                    return ssp.loadModel({
+                        id: item.id,
+                        name: item.modelname,
+                        url: '../../asstes/model/sbmx/wjc/' + item.filepath,
+                        position: { x: item.x, y: item.y, z: item.z },
+                        rotation: {
+                            x: deg2rad(item.rotation_x),
+                            y: deg2rad(item.rotation_y),
+                            z: deg2rad(item.rotation_z),
+                        },
+                        scale: { x: item.scale_x, y: item.scale_y, z: item.scale_z },
+                    });
+                })
+            )
+
+            // 材质抛光
+            const materialKeyName = ['玻璃', '屏幕', '银', '钢', '铝', '金属']
+            ssp.viewport.scene.traverse(function (child) {
+                if (child.isMesh) {
+                    const material = child.material
+
+                    // 查找关键字，包含金属、玻璃等。。。
+                    const hasKeyName = materialKeyName.find((name) =>
+                        child.name?.includes(name) || material.name?.includes(name)
+                    )
+
+                    if (hasKeyName) {
+                        material.roughness = 0
+                        material.metalness = 0.8
+                        material.needsUpdate = true
+                    }
+                }
+            })
+
+            // 外壳半透明
+            const keyNames = ['混凝土', '天花板'];
+            const main = ssp.getModelById(2146178279);
+            main.traverse((child) => {
+                if (child.isMesh) {
+                    if (
+                        keyNames.find(
+                            (name) =>
+                                child.name.includes(name) ||
+                                child.material.name.includes(name)
+                        )
+                    ) {
+                        child.material.transparent = true;
+                        child.material.opacity = 0.3;
+                    }
+                }
+            });
+        })();
+
+    </script>
+</body>
+
+</html>

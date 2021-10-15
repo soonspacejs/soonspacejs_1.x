@@ -32,12 +32,13 @@
       }
     })
 
-    ssp.loadXml({ id: 'xml' }, '../../asstes/model/sbm/hzl/hzl.xml')
-      .then(group => {
-
-        ssp.flyMainViewpoint()
-
-      })
+    const ground = ssp.createGround({
+      imgUrl: '../../asstes/img/ground/005.jpg',
+      width: 500000,
+      height: 500000,
+      position: { x: 0, y: -1000, z: 0 },
+      repeat: { width: 10, height: 10 }
+    })
 
     const gui = new GUI({
       el: '#view'
@@ -48,10 +49,16 @@
     gui.addButton({
       text: '加载路径',
       onClick() {
-        ssp.loadGml({ id: 'gml', visible: false }, '../../asstes/model/sbm/hzl/hzl.gml')
+        ssp.loadGml({ id: 'gml' }, '../../asstes/model/gml/tuobutujinzui0401115.gml')
           .then(group => {
             pathGroup = group
             shortestPathBtn.parentNode.show()
+
+            console.log('loadGml', group)
+
+            group.hide()
+
+            ssp.flyToObj(group)
           })
       }
     })
@@ -65,23 +72,23 @@
         shortestPath = ssp.getShortestPath({
           topology: pathGroup.children[0],
           positions: {
-            start: {
-              x: 2573,
-              y: 2,
-              z: -582
-            },
-            end: {
-              x: 4522,
-              y: 2,
-              z: 5257
-            }
+            // 1
+            // start: { x: -2276.699237322046, y: 299.9999999999998, z: -2981.9710830239715, isVector3: true },
+            // end: { x: 2118.35618722643, y: -650.0000000000001, z: -17893.889427365742, isVector3: true },
+            // 2
+            start: { x: 2134.644674740472, y: 12.408532659076627, z: -38295.53245718403, isVector3: true },
+            end: { x: 1483.3148157994474, y: -648.1742459495711, z: -35553.27038625605, isVector3: true }
           },
-          imgUrl: '../../asstes/img/topology/1.png'
+          // imgUrl: '../../asstes/img/topology/1.png'
         })
 
-        shortestPath.hide()
+        console.log(shortestPath)
 
-        if (shortestPath) autoPatrolBtn.parentNode.show()
+        if (shortestPath) {
+          autoPatrolBtn.parentNode.show()
+          ssp.flyToObj(shortestPath)
+          // shortestPath.hide()
+        }
         else alert('未能计算出俩点直接的最短路径！')
 
       }
@@ -98,11 +105,12 @@
       },
       onClick() {
         patrolControls.start({
-          lookAtY: 50,
           path: shortestPath,
-          naviSpeed: 1,
+          naviSpeed: 0.1,
+          rotateSpeed: 0.5,
           eyeHeight: 100,
-          onUpdate: (currPosition, nextPoints) => {
+          flyToStartPoint: false,
+          onUpdate: (currPosition) => {
             for (let i = 0; i < pausePoints.length; i++) {
               if (currPosition.distanceTo(pausePoints[i]) <= 100) {
                 patrolControls.pause()
@@ -151,6 +159,18 @@
 
         pauseBtn.parentNode.hide()
         stopBtn.parentNode.hide()
+
+      }
+    })
+
+    gui.addButton({
+      text: '加速',
+      onClick() {
+        patrolControls.setOptions({
+          naviSpeed: 1,
+          // rotateSpeed: 0.3,
+          // eyeHeight: 100,
+        })
 
       }
     })

@@ -27,9 +27,11 @@
 
     let model, model2
 
+    ssp.viewport.state.animationUpdateCycle = 3
+
     ssp.loadModel({
       id: 'firsFbxGroup',
-      url: '../../asstes/model/Fbx/dt/DTdh.fbx',
+      url: '../../asstes/model/fbx/dt/DTdh.fbx',
       position: { x: 0, y: 0, z: 40 },
       onClick() {
         console.log('model self click', this)
@@ -43,15 +45,15 @@
 
         ssp.flyToObj(fbx, 'leftTop')
 
-        return ssp.cloneModel(model, {
-          id: 'firsFbxGroup2',
-          position: { x: 0, y: 0, z: 20 }
-        })
+        // return ssp.cloneModel(model, {
+        //   id: 'firsFbxGroup2',
+        //   position: { x: 0, y: 0, z: 20 }
+        // })
       })
-      .then(fbx => {
-        console.log(fbx)
-        model2 = fbx
-      })
+      // .then(fbx => {
+      //   console.log(fbx)
+      //   model2 = fbx
+      // })
 
     const gui = new GUI({
       el: '#view'
@@ -62,13 +64,14 @@
       onChange(e) {
         if (e.target.checked) {
           const clipAction = model.playAnimation()
-          const clipAction2 = model2.playAnimation()
+          console.log('clipAction', clipAction)
+          // const clipAction2 = model2.playAnimation()
 
-          console.log(clipAction, clipAction2)
+          // console.log(clipAction, clipAction2)
         }
         else {
           model.stopAnimation()
-          model2.stopAnimation()
+          // model2.stopAnimation()
         }
       }
     })

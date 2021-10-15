@@ -11,10 +11,14 @@
 
 <body>
   <div id="view">
-    <div class=""></div>
+    <canvas id="canvas"></canvas>
   </div>
   <script src="../../sdk/index.js"></script>
   <script>
+
+    const canvas = document.getElementById('canvas')
+    const context = canvas.getContext('webgl2')
+
     window.ssp = new SoonSpace({
       // 绑定场景的元素选择器
       el: '#view',
@@ -36,7 +40,11 @@
         showInfo: true
       },
       // 场景交互事件
-      events: {}
+      events: {},
+      renderer: {
+        canvas,
+        context
+      }
     })
 
   </script>

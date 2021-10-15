@@ -96,7 +96,7 @@
           alert('2.5D PoiNode click')
         }
 
-        ssp.createPoiNode({
+        const poiNode = ssp.createPoiNode({
           type: '2.5D',
           id: '2.5DPoiNode',
           position: {
@@ -107,6 +107,7 @@
           element: poi2_5DEl
         })
 
+        ssp.flyToObj(poiNode, 'frontTop', { padding: 400 })
       }
     })
 

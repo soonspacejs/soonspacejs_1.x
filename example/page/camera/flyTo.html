@@ -36,7 +36,6 @@
   <script>
 
     let lastEnd = true
-    let model = null
 
     const ssp = new SoonSpace({
       el: '#view',
@@ -61,21 +60,73 @@
       }
     });
 
-    ssp.loadModel({
-      id: 'firstJson',
-      url: '../../asstes/model/json/hmCar.json',
-      rotation: {
-        x: 0,
-        y: Math.PI / 2,
-        z: 0
+    const baseUrl = '../../asstes/model/sbm/yingtaidasha'
+    const sbmsInfo = [
+      {
+        id: 'B1_0',
+        name: 'B1',
+        url: `${baseUrl}/yingtaidasha_B1_0.sbm`,
+        position: { x: 0, y: 0, z: 0 },
+        userData: {
+          modelCode: 'njnkjnkjnjdnkjnkjnm'
+        }
       },
-      position: {
-        x: 100,
-        y: 60,
-        z: -59
+      {
+        id: '1F',
+        name: '1F',
+        url: `${baseUrl}/yingtaidasha_1F_1.sbm`,
+        userData: {
+          aaaaaaa: 'a'
+        }
+      },
+      {
+        id: '2F',
+        name: '2F',
+        url: `${baseUrl}/yingtaidasha_2F_2.sbm`,
+      },
+      {
+        id: '3F',
+        name: '3F',
+        url: `${baseUrl}/yingtaidasha_3F_3.sbm`,
+        userData: {
+          data: {
+            age: 17
+          }
+        }
+      },
+      {
+        id: '4F',
+        name: '4F',
+        url: `${baseUrl}/yingtaidasha_4F_4.sbm`,
+        userData: {
+          data: {
+            age: 18
+          }
+        }
+      },
+      {
+        id: '5F',
+        name: '5F',
+        url: `${baseUrl}/yingtaidasha_5F_5.sbm`,
+        userData: {
+          data: {
+            sex: '男'
+          }
+        }
+      },
+      {
+        id: '6F',
+        name: '6F',
+        url: `${baseUrl}/yingtaidasha_6F_6.sbm`,
+      },
+      {
+        id: '7F',
+        name: '7F',
+        url: `${baseUrl}/yingtaidasha_7F_7.sbm`
       }
-    })
-      .then(res => model = res)
+    ]
+
+    ssp.loadSbm(sbmsInfo)
 
     const gui = new GUI({
       el: '#view'
@@ -87,10 +138,10 @@
         if (!lastEnd) return alert('请等待上一次结束！')
 
         ssp.flyMainViewpoint()
-          .then(res => {
+          .then(() => {
             lastEnd = true
 
-            console.log('flyMainViewpoint done', res)
+            console.log('flyMainViewpoint done')
           })
       }
     })
@@ -118,10 +169,10 @@
             duration: 2000
           }
         )
-          .then(res => {
+          .then(() => {
             lastEnd = true
 
-            console.log('flyTo done', res)
+            console.log('flyTo done')
 
           })
       }
@@ -140,14 +191,14 @@
           poi,
           "front",
           {
-            padding: 100,
-            duration: 2000
+            padding: 50,
+            duration: 1000
           }
         )
-          .then(res => {
+          .then(() => {
             lastEnd = true
 
-            console.log('flyToPoi done', res)
+            console.log('flyToPoi done')
           })
       }
     })
@@ -161,18 +212,17 @@
 
         // flyTo
         ssp.flyToObj(
-          model,
-          "current",
-          // "frontTop",
+          ssp.getSbmById('7F'),
+          "frontTop",
           {
-            padding: 10,
+            padding: -4000,
             duration: 2000
           }
         )
-          .then(res => {
+          .then(() => {
             lastEnd = true
 
-            console.log('flyToModel done', res)
+            console.log('flyToModel done')
 
             const leftEl = document.getElementById('poiTemplate').cloneNode(true)
             leftEl.style.left = '-200px'
@@ -181,7 +231,7 @@
             ssp.createPoiNode({
               type: '2d',
               id: 'leftPoiNode',
-              position: ssp.getObjectLabelPosRelativeToScreen(model),
+              position: ssp.getObjectLabelPosRelativeToScreen(ssp.getSbmById('7F')),
               element: leftEl
             })
 
@@ -192,7 +242,7 @@
             ssp.createPoiNode({
               type: '2d',
               id: 'rightPoiNode',
-              position: ssp.getObjectLabelPosRelativeToScreen(model),
+              position: ssp.getObjectLabelPosRelativeToScreen(ssp.getSbmById('7F')),
               element: rightEl
             })
           })

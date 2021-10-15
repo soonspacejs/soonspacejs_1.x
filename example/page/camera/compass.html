@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SoonSpace Example</title>
+  <link rel="stylesheet" href="../../asstes/css/base.css">
+  <link rel="stylesheet" href="../../lib/antd-vue/antd.min.css">
+</head>
+
+<body>
+  <div id="view"></div>
+
+  <span id="compass" style="position: fixed; right: 12px; top: 12px;">
+    <svg t="1619422630720" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+      p-id="2017" width="32" height="32">
+      <path
+        d="M841.77307 441.446318c-25.459092-14.5761-58.626592-4.824803-74.110867 21.711614L567.604042 806.797276 567.604042 75.810422c0-32.788926-24.258932-59.36461-54.211575-59.36461l-0.025171 0c-29.952643 0-54.240774 26.57669-54.240774 59.36461L459.126522 812.225179 255.906867 463.157931c-15.484275-26.536417-48.651775-36.287714-74.136038-21.711614-25.488291 14.547909-33.585341 47.862408-18.097039 74.446147l279.942279 480.898547c12.616779 21.683422 37.040834 32.131456 59.451198 27.334845 3.335679 0.702778 6.777076 1.083366 10.300028 1.083366l0.025171 0c2.970194 0 5.880984-0.271848 8.721295-0.774264 21.95527 3.972005 45.505383-6.47905 57.840246-27.64294l279.942279-480.898547C875.383583 489.308726 867.261361 455.99322 841.77307 441.446318z"
+        p-id="2018" fill="#1296db"></path>
+    </svg>
+  </span>
+
+  <script src="../../sdk/index.js"></script>
+
+  <script>
+
+    // new VConsole()
+
+    const ssp = new SoonSpace({
+      el: '#view',
+      option: {
+        showInfo: true
+      },
+      events: {
+        modelClick(e) {
+          console.log(e)
+        },
+        modelRightClick(e) {
+          console.log(e)
+        },
+        selectPosition(p) {
+          console.log(p)
+        }
+      }
+    })
+
+    const baseUrl = '../../asstes/model/sbm/yingtaidasha'
+    const sbmsInfo = [
+      {
+        id: 'B1_0',
+        name: 'B1',
+        url: `${baseUrl}/yingtaidasha_B1_0.sbm`,
+        position: { x: 0, y: 0, z: 0 },
+        userData: {
+          modelCode: 'njnkjnkjnjdnkjnkjnm'
+        }
+      },
+      {
+        id: '1F',
+        name: '1F',
+        url: `${baseUrl}/yingtaidasha_1F_1.sbm`,
+        userData: {
+          aaaaaaa: 'a'
+        }
+      },
+      {
+        id: '2F',
+        name: '2F',
+        url: `${baseUrl}/yingtaidasha_2F_2.sbm`,
+      },
+      {
+        id: '3F',
+        name: '3F',
+        url: `${baseUrl}/yingtaidasha_3F_3.sbm`,
+        userData: {
+          data: {
+            age: 17
+          }
+        }
+      },
+      {
+        id: '4F',
+        name: '4F',
+        url: `${baseUrl}/yingtaidasha_4F_4.sbm`,
+        userData: {
+          data: {
+            age: 18
+          }
+        }
+      },
+      {
+        id: '5F',
+        name: '5F',
+        url: `${baseUrl}/yingtaidasha_5F_5.sbm`,
+        userData: {
+          data: {
+            sex: '男'
+          }
+        }
+      },
+      {
+        id: '6F',
+        name: '6F',
+        url: `${baseUrl}/yingtaidasha_6F_6.sbm`,
+      },
+      {
+        id: '7F',
+        name: '7F',
+        url: `${baseUrl}/yingtaidasha_7F_7.sbm`,
+        visible: false
+      }
+    ]
+
+    ssp.loadSbm(sbmsInfo)
+      .then(models => {
+        ssp.flyMainViewpoint()
+      })
+
+    ssp.viewport.signals.cameraChange.add(position => {
+      const direction = ssp.viewport.camera.getWorldDirection();
+
+      const rad = new ssp.viewport.THREE.Vector2(direction.x, direction.z).angle();
+      const angle = ssp.viewport.THREE.Math.radToDeg(rad) - 90;
+      document.getElementById('compass').style.transform = `rotateZ(${angle}deg)`;
+    })
+  </script>
+</body>
+
+</html>

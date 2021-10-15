@@ -25,11 +25,6 @@
       events: {}
     })
 
-    ssp.loadXml({ id: 'hzl' }, '../../asstes/model/sbm/hzl/hzl.xml')
-      .then(() => {
-        ssp.flyMainViewpoint()
-      })
-
     const gui = new GUI({
       el: '#view'
     })
@@ -37,9 +32,10 @@
     gui.addButton({
       text: '加载 Gml',
       onClick() {
-        ssp.loadGml({ id: 'gml' }, '../../asstes/model/sbm/hzl/hzl.gml')
-          .then(gml => {
-            console.log('gml', gml)
+        ssp.loadGml({ id: 'gml' }, '../../asstes/model/gml/tuobutujinzui0401115.gml')
+          .then(group => {
+            console.log('gml', group)
+            ssp.flyMainViewpoint()
           })
       }
     })

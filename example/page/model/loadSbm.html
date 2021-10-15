@@ -12,7 +12,6 @@
 
 <body>
   <div id="view"></div>
-
   <script src="../../sdk/index.js"></script>
   <script src="../../../package/soon-gui/index.js"></script>
   <script src="https://unpkg.com/vconsole@3.3.4/dist/vconsole.min.js"></script>
@@ -21,7 +20,7 @@
 
     // new VConsole()
 
-    const ssp = new SoonSpace({
+    let ssp = new SoonSpace({
       el: '#view',
       option: {
         showInfo: true,

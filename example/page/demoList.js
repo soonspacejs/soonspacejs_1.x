@@ -22,6 +22,10 @@ export default [
         demoLink: "./model/loadSbm.html"
       },
       {
+        title: "加载 Sbmx",
+        demoLink: "./model/loadSbmx.html"
+      },
+      {
         title: "加载 Xml",
         demoLink: "./model/loadXml.html"
       },
