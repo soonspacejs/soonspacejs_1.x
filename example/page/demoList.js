@@ -271,6 +271,22 @@ export default [
       },
     ]
   },
+  // effect
+  {
+    title: "特效",
+    icon: "bank",
+    key: "effect",
+    children: [
+      {
+        title: "火焰",
+        demoLink: "./effect/flame.html"
+      },
+      {
+        title: "烟雾",
+        demoLink: "./effect/smoke.html"
+      },
+    ]
+  },
   // 计算
   {
     title: "计算",
@@ -308,6 +324,10 @@ export default [
       {
         title: "webworker 加载",
         demoLink: "./package/SbmLoaderWebWorker.html"
+      },
+      {
+        title: "SoonManager 场景加载",
+        demoLink: "./package/soonmanager-sync.html"
       }
     ]
   },

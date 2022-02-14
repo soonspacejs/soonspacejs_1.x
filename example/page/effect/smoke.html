@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SoonSpace Example</title>
+    <link rel="stylesheet" href="../../asstes/css/base.css" />
+  </head>
+
+  <body>
+    <div id="view"></div>
+    <script src="../../sdk/index.js"></script>
+    <script src="../../../package/soon-gui/index.js"></script>
+
+    <script>
+      const ssp = new SoonSpace({
+        el: '#view',
+        option: {
+          showInfo: true,
+        },
+        events: {},
+      });
+
+      let smoke = ssp.createSmoke({
+        id: 'smoke',
+        position: {
+          x: 3000,
+          y: 0,
+          z: -3000,
+        },
+        size: 600,
+        color: [0xffffff, 0x333333],
+      });
+
+      const baseUrl = '../../asstes/model/sbm/yingtaidasha';
+      const sbmsInfo = [
+        {
+          id: 'B1_0',
+          name: 'B1',
+          url: `${baseUrl}/yingtaidasha_B1_0.sbm`,
+        },
+      ];
+
+      /**
+       * 加载 sbm˝
+       */
+      ssp.loadSbm(sbmsInfo).then(([sbm]) => {
+        ssp.flyToObj(sbm);
+      });
+
+      const gui = new GUI({
+        el: '#view',
+      });
+
+      gui.addButton({
+        text: '删除烟雾',
+        onClick(e) {
+          ssp.removeEffectById('smoke');
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="view" style="width: 100vw; height: 100vh"></div>
+
+    <script src="../../sdk/index.js"></script>
+    <script src="https://unpkg.com/@soonspacejs/soonmanager-sync@0.3.9/dist/index.js"></script>
+    <script>
+        const ssp = (window.ssp = new SoonSpace({
+            el: '#view',
+            option: {
+                showGrid: false,
+                showInfo: true,
+            },
+            events: {
+                modelClick(e) {
+                    console.log(e)
+                },
+                selectPosition(p) {
+                    console.log(p);
+                },
+            },
+        }));
+
+        const soonmanagerSync = (window.soonmanagerSync = ssp.install(
+            SoonmanagerSync.default,
+            'soonmanagerSync'
+        ));
+        soonmanagerSync.setBaseUrl('../../asstes/model/sbm/nanrui/');
+        // soonmanagerSync.setGlobalSetting();
+        console.log(soonmanagerSync);
+
+        // ssp.loadSbm({ id: 1676038, url: './data3/res/chukou5/chukou5_1F_0.sbm' });
+
+        /**
+         * 指定开始加载的树节点 ID,
+         * 指定 ID 存在时，当前节点相当于根节点
+         * 未指定或指定为空，从根节点开始加载场景
+         * 指定的 ID 无法命中节点，不会加载任何模型
+         */
+        // targetId: xxxxx,
+
+        /**
+         * 从指定节点开始，向下加载的的层级深度。
+         * 等于 1 时只加载根节点
+         * 不设置时加载全部层级子集
+         */
+        // targetLevel: 2,
+
+        /**
+         * 是否利用页面交互空闲时间去加载剩余模型，当 targetLevel 大于1或未指定时生效
+         * isIdleRest: true,
+         */
+
+        console.time('外壳加载完成');
+        console.time('全部加载完成');
+
+        soonmanagerSync
+            .loadScene({
+                // targetId: [6666836, 6666835, 13061043],
+                // targetLevel: 2,
+                isIdleRest: true,
+                loadSceneAllSuccess() {
+                    console.timeEnd('全部加载完成');
+                },
+            })
+            .then(() => {
+                console.timeEnd('外壳加载完成');
+                ssp.flyMainViewpoint();
+            });
+    </script>
+</body>
+
+</html>

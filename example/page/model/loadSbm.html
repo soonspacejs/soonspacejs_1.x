@@ -141,6 +141,20 @@
     )
       .then(models => {
         // ssp.flyMainViewpoint()
+        const f5 = ssp.getSbmById('5F'),
+          f6 = ssp.getSbmById('6F'),
+          f7 = ssp.getSbmById('7F')
+
+        const f5box = ssp.utils.getBoundingBox(f5),
+          f6box = ssp.utils.getBoundingBox(f6),
+          f7box = ssp.utils.getBoundingBox(f7)
+
+        const unionBox = f5box.union(f6box).union(f7box) // 可以合并任意多个 box
+
+        const helper = new ssp.viewport.THREE.Box3Helper(unionBox, 0xff0000)
+
+        ssp.addObject(helper)
+
       })
       .catch(err => {
         console.error(err)
