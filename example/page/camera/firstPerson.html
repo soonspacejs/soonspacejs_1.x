@@ -24,10 +24,10 @@
       },
       events: {
         selectPosition(position) {
-          console.log('selectPosition', position)
+          // console.log('selectPosition', position)
         },
         modelClick(param) {
-          console.log(param)
+          // console.log(param)
         }
       }
     })
@@ -54,24 +54,28 @@
 
     gui.addButton({
       text: '开始第一人称',
-      onClick() {
+      onClick(e) {
         ssp.startFirstPerson({
           startPosition: {
             x: -35,
             y: 1000,
             z: 2515
           },
-          moveSpeed: 3.0,
+          moveSpeed: 2,
           rotationSpeed: 1.0,
-          jumpSpeed: 3.0
+          jumpSpeed: 3.0,
+          enableClash: false,
+          enableGravity: true,
         })
+        e.target.blur()
       }
     })
 
     gui.addButton({
       text: '关闭第一人称',
-      onClick() {
+      onClick(e) {
         ssp.stopFirstPerson()
+        e.target.blur()
       }
     })
 
